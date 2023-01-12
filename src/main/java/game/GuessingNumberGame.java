@@ -1,6 +1,6 @@
 package game;
 
-public interface RandomNumberGame {
+public interface GuessingNumberGame {
     void start();
 
     int getRandomNumber();

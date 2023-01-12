@@ -1,4 +1,6 @@
-import game.RandomNumberGame;
+import game.GuessingNumberGame;
+import game.GuessingNumberGameImpl;
+import game.RandomNumberGeneratorApi;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,11 +12,11 @@ public class RandomNumberGameShould {
     private static final String HIGHER_NUMBER_MSG = "the number is higher than your guess! please try again.";
     private static final String LOSE_MSG = "You are lose!!";
 
-    private RandomNumberGame game;
+    private GuessingNumberGame game;
 
     @Before
     public void setUp() {
-        game = new RandomNumberGameDouble();
+        game = new GuessingNumberGameImpl(new RandomNumberGeneratorDouble());
         game.start();
     }
 
@@ -24,7 +26,7 @@ public class RandomNumberGameShould {
     }
 
     @Test
-    public void return_win_word_when_player_guess_is_correct() {
+    public void return_win_word_when_player_guess_is_correct_in_first_times() {
         assertThat(game.guess(1234)).isEqualTo(WIN_MSG);
     }
 
@@ -41,40 +43,27 @@ public class RandomNumberGameShould {
         assertThat(game.guess(1255)).isEqualTo(LOSE_MSG);
     }
 
-    private static class RandomNumberGameDouble implements RandomNumberGame {
-        private int randomNumber = 0;
-        private int maxTries = 3;
+    @Test
+    public void player_is_win_in_second_move() {
+        assertThat(game.guess(4565)).isEqualTo(LOWER_NUMBER_MSG);
+        assertThat(game.guess(1234)).isEqualTo(WIN_MSG);
+    }
 
-        @Override
-        public void start() {
-            randomNumber = 1234;
+    @Test
+    public void player_is_win_in_third_move() {
+        assertThat(game.guess(4565)).isEqualTo(LOWER_NUMBER_MSG);
+        assertThat(game.guess(1012)).isEqualTo(HIGHER_NUMBER_MSG);
+        assertThat(game.guess(1234)).isEqualTo(WIN_MSG);
+    }
+
+    private static class RandomNumberGeneratorDouble implements RandomNumberGeneratorApi {
+
+        public RandomNumberGeneratorDouble() {
         }
 
         @Override
-        public int getRandomNumber() {
-            return randomNumber;
-        }
-
-        @Override
-        public String guess(int guessNumber) {
-            if (isWin(guessNumber)) {
-                return WIN_MSG;
-            }
-            maxTries--;
-            if (isLose()) {
-                return LOSE_MSG;
-            } else if (randomNumber < guessNumber) {
-                return LOWER_NUMBER_MSG;
-            }
-            return HIGHER_NUMBER_MSG;
-        }
-
-        private boolean isLose() {
-            return maxTries == 0;
-        }
-
-        private boolean isWin(int theGuess) {
-            return theGuess == randomNumber;
+        public Integer generateRandomNumber() {
+            return 1234;
         }
     }
 }
