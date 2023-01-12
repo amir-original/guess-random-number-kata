@@ -1,11 +1,14 @@
 package game;
 
+import game.exceptions.NoStartGameException;
+
+import static game.GuessingNumberMessages.*;
+
 public class GuessingNumberGameImpl implements GuessingNumberGame {
 
+    private static final int NO_START = -1;
 
-
-    private int MAX_TRIES = 3;
-
+    private int MAX_TRIES = NO_START;
     private int randomNumber;
     private final RandomNumberGeneratorApi randomNumberGenerator;
 
@@ -15,21 +18,30 @@ public class GuessingNumberGameImpl implements GuessingNumberGame {
 
     public void start() {
         randomNumber = randomNumberGenerator.generateRandomNumber();
+        MAX_TRIES = 3;
     }
 
     @Override
-    public String guess(int guessedNumbers) {
-        if (isWin(guessedNumbers)) return GuessingNumberMessages.WIN;
-        decrementMaxTries();
+    public String guess(int guessedNumber) {
+        if (MAX_TRIES == NO_START) throw new NoStartGameException();
+        return isWin(guessedNumber) ? WIN : processOtherConditions(guessedNumber);
 
-        if (isLose()) return GuessingNumberMessages.LOSE;
-        else if (isGuessHigherThanRandomNumber(guessedNumbers)) return GuessingNumberMessages.LOWER_NUMBER;
-
-        return GuessingNumberMessages.HIGHER_NUMBER;
     }
 
-    private boolean isGuessHigherThanRandomNumber(int guessNumber) {
-        return randomNumber < guessNumber;
+
+    private String processOtherConditions(int guessedNumber) {
+        decrementMaxTries();
+        if (isLose()) {
+            return LOSE;
+        } else if (isGuessedNumHigherThanRandomNumber(guessedNumber)) {
+            return RAND_IS_LOWER_THAN_GUESSED;
+        }else {
+            return RAND_IS_HIGHER_THAN_GUESSED;
+        }
+    }
+
+    private boolean isGuessedNumHigherThanRandomNumber(int guessedNumber) {
+        return randomNumber < guessedNumber;
     }
 
     private void decrementMaxTries() {
