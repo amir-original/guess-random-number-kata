@@ -25,12 +25,12 @@ public class RandomNumberGameShould {
     }
 
     @Test
-    public void return_win_word_when_player_guess_is_correct_in_first_times() {
+    public void player_win_in_first_move() {
         assertThat(game.guess(GAME_ANSWER)).isEqualTo(WIN);
     }
 
     @Test
-    public void notify_the_user_if_number_its_higher_or_lower_when_user_does_correct_guess() {
+    public void notify_the_user_if_number_its_higher_or_lower_when_user_does_not_correct_guess() {
         assertThat(game.guess(1235)).isEqualTo(RAND_IS_LOWER_THAN_GUESSED);
         assertThat(game.guess(1212)).isEqualTo(RAND_IS_HIGHER_THAN_GUESSED);
     }
